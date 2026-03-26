@@ -50,6 +50,7 @@ from pilot.control.payloads import (
     eventservice,
     eventservicemerge,
     generic,
+    kubernetes_executor,
 )
 from pilot.control.job import send_state
 from pilot.info import JobData
@@ -201,6 +202,17 @@ def get_payload_executor(args: object, job: JobData, out: TextIO, err: TextIO, t
     :param traces: traces object (Any)
     :return: instance of a payload executor (Any).
     """
+    if getattr(config, "k8s_native", False) or os.environ.get("PILOT_K8S_NATIVE", "").lower() in ("1", "true"):
+        try:
+            return kubernetes_executor.Executor(args, job, out, err, traces)
+        except ImportError:
+            logger.error(
+                "Kubernetes executor requested (k8s_native/PILOT_K8S_NATIVE) but the "
+                "'kubernetes' package is not available on this node. "
+                "Falling through to generic executor."
+            )
+            return generic.Executor(args, job, out, err, traces)
+
     if job.is_eventservice:  # True for native HPO workflow as well
         payload_executor = eventservice.Executor(args, job, out, err, traces)
     elif job.is_eventservicemerge:
