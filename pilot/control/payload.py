@@ -50,7 +50,7 @@ from pilot.control.payloads import (
     eventservice,
     eventservicemerge,
     generic,
-    kubernetesx,
+    kubernetes_executor,
 )
 from pilot.control.job import send_state
 from pilot.info import JobData
@@ -216,13 +216,13 @@ def get_payload_executor(args: object, job: JobData, out: TextIO, err: TextIO, t
 
     Returns:
         An executor instance exposing at minimum a ``run()`` method. The
-        concrete type is one of :class:`kubernetesx.Executor`,
+        concrete type is one of :class:`kubernetes_executor.Executor`,
         :class:`eventservice.Executor`, :class:`eventservicemerge.Executor`,
         or :class:`generic.Executor`.
     """
     if getattr(config, "k8s_native", False) or os.environ.get("PILOT_K8S_NATIVE", "").lower() in ("1", "true"):
         try:
-            return kubernetesx.Executor(args, job, out, err, traces)
+            return kubernetes_executor.Executor(args, job, out, err, traces)
         except ImportError:
             logger.error(
                 "Kubernetes executor requested (k8s_native/PILOT_K8S_NATIVE) but the "

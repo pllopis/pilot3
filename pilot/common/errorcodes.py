@@ -188,7 +188,18 @@ class ErrorCodes:
     QUEUENOTSETUPFORCONTAINERS = 1384
     NOJOBSINPANDA = 1385  # internally used code
     PANDAQUEUENOTONLINE = 1386
-
+    K8SNATIVESETUPFAIL = 1387
+    K8SPODPATCHFAILED = 1388
+    K8SPODNOTFOUND = 1389
+    K8SCONTAINERNOTFOUND = 1390
+    K8SIMAGEPULLFAILED = 1391
+    K8SWRAPPERSCRIPTWRITEFAILED = 1392
+    K8SSHAREDVOLUMENOTFOUND = 1393
+    K8SPAYLOADCONTAINERMISSING = 1394
+    K8SWRAPPEREXECUTIONFAILED = 1395
+    K8SGRACEFULSTOPFAILED = 1396
+    K8SIMAGEPATCHFAILED = 1397
+    K8SCONTAINERSTARTTIMEOUT = 1398
     _error_messages = {
         GENERALERROR: "General pilot error, consult batch log",
         NOLOCALSPACE: "Not enough local space",
@@ -337,7 +348,18 @@ class ErrorCodes:
         QUEUENOTSETUPFORCONTAINERS: "Queue is not set up for containers",
         NOJOBSINPANDA: "No jobs in PanDA",
         PANDAQUEUENOTONLINE: "PanDA queue is not online",
-
+        K8SNATIVESETUPFAIL: "Failed to set up k8s-native payload execution",
+        K8SPODPATCHFAILED: "Failed to patch k8s pod",
+        K8SPODNOTFOUND: "k8s pod not found",
+        K8SCONTAINERNOTFOUND: "k8s container not found",
+        K8SIMAGEPULLFAILED: "Failed to pull container image",
+        K8SWRAPPERSCRIPTWRITEFAILED: "Failed to write wrapper script to shared volume",
+        K8SSHAREDVOLUMENOTFOUND: "Required shared volume not found",
+        K8SPAYLOADCONTAINERMISSING: "Payload container is missing in pod",
+        K8SWRAPPEREXECUTIONFAILED: "Wrapper script execution failed",
+        K8SGRACEFULSTOPFAILED: "Failed to stop container gracefully",
+        K8SIMAGEPATCHFAILED: "Failed to patch container image",
+        K8SCONTAINERSTARTTIMEOUT: "Container failed to start within timeout",
     }
 
     put_error_codes = [1135, 1136, 1137, 1141, 1152, 1181]
