@@ -15,7 +15,6 @@ from pilot.control.job import send_state
 from pilot.control.payloads.generic import Executor as GenericExecutor
 from pilot.info import JobData
 from pilot.util.auxiliary import set_pilot_state
-from pilot.util.filehandling import write_file
 from pilot.util.k8s import (
     K8sError,
     get_k8s_client,
@@ -193,7 +192,7 @@ class Executor(GenericExecutor):
         set_pilot_state(job=job, state="running")
 
         if self._Executor__args.update_server:
-            send_state(job, self.__args, job.state)
+            send_state(job, self._Executor__args, job.state)
 
         start_time = time.time()
         self._k8s_handle["start_time"] = start_time
