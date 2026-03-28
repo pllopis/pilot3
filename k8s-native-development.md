@@ -223,7 +223,6 @@ The k8s-native executor uses these environment variables:
 | `POD_NAME` | Name of the pilot pod | auto-detected |
 | `POD_NAMESPACE` | Namespace of the pilot pod | default |
 | `K8S_SHARED_VOLUME_PATH` | Path to shared volume | /mnt/wrapper |
-| `K8S_WRAPPER_SCRIPT_PATH` | Path to wrapper script | /mnt/wrapper/launch.sh |
 
 ## Job Configuration
 

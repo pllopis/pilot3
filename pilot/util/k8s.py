@@ -349,16 +349,6 @@ def get_payload_container_name(job) -> str:
     return job.infosys.queuedata.params.get("k8s_payload_container", "payload")
 
 
-def get_wrapper_script_path() -> str:
-    """
-    Get the path to the wrapper script in the shared volume.
-
-    Returns:
-        Wrapper script path
-    """
-    return os.environ.get("K8S_WRAPPER_SCRIPT_PATH", "/mnt/wrapper/launch.sh")
-
-
 def get_shared_volume_path() -> str:
     """
     Get the path to the shared volume mount.
