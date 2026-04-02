@@ -133,7 +133,7 @@ class Executor(GenericExecutor):
             env_dict = {
                 "JOB_ID": job.jobid,
                 "WORKDIR": job.workdir,
-                "PANDA_ID": job.pandaid,
+                "PANDA_ID": job.jobid,
             }
 
             wrapper_script_content = generate_wrapper_script(cmd, "", env_dict)
@@ -301,10 +301,17 @@ class Executor(GenericExecutor):
 
         self.pre_setup(self._Executor__job)
 
-        cmd = self.get_payload_command()
+        # K8s-native execution requires a container image
+        if not self._Executor__job.imagename:
+            return errors.K8SNATIVESETUPFAIL, "k8s-native execution requires a container image (--containerImage)"
+
+        # Use jobparams directly — skip trf download and wrapping.
+        # The trf (transformation) is an ATLAS concept for non-container execution.
+        # With k8s-native, the container image IS the runtime environment,
+        # and job.jobparams contains the direct exec string from --exec.
+        cmd = self._Executor__job.jobparams
         if not cmd:
-            logger.warning("aborting run() since payload command could not be defined")
-            return errors.UNKNOWNPAYLOADFAILURE, "undefined payload command"
+            return errors.UNKNOWNPAYLOADFAILURE, "no execution command (--exec) specified"
 
         self.post_setup(self._Executor__job)
 
