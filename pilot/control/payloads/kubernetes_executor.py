@@ -150,6 +150,11 @@ class Executor(GenericExecutor):
 
         target_image = job.imagename if job.imagename else initial_image
 
+        # Strip singularity container prefixes (docker://, docker-daemon://, etc.)
+        # since Kubernetes expects plain image references like "alpine:latest"
+        if target_image and "://" in target_image:
+            target_image = target_image.split("://", 1)[1]
+
         try:
             if target_image != initial_image:
                 k8s_client.patch_container_image(
