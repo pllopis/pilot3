@@ -132,10 +132,24 @@ class KubernetesClient:
         """
         from kubernetes.client.exceptions import ApiException
 
+        # Look up the container's index in the pod spec (JSON Patch requires numeric index)
+        pod = self.core_v1.read_namespaced_pod(name=pod_name, namespace=namespace)
+        container_index = None
+        for i, container in enumerate(pod.spec.containers):
+            if container.name == container_name:
+                container_index = i
+                break
+
+        if container_index is None:
+            raise K8sError(
+                f"Container {container_name} not found in pod {pod_name}",
+                errors.K8SCONTAINERNOTFOUND,
+            )
+
         patch = [
             {
                 "op": "replace",
-                "path": f"/spec/containers/{container_name}/image",
+                "path": f"/spec/containers/{container_index}/image",
                 "value": new_image,
             }
         ]
@@ -143,7 +157,7 @@ class KubernetesClient:
             self.core_v1.patch_namespaced_pod(
                 name=pod_name, namespace=namespace, body=patch
             )
-            logger.info(f"Patched container {container_name} to image {new_image}")
+            logger.info(f"Patched container {container_name} (index {container_index}) to image {new_image}")
         except ApiException as e:
             logger.error(f"Failed to patch container image: {e}")
             raise K8sError(

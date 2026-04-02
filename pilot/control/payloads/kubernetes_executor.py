@@ -128,7 +128,10 @@ class Executor(GenericExecutor):
         logger.info(f"Target payload image: {job.imagename}")
 
         wrapper_path = None
-        self._job_dir = get_job_dir_path(job.jobid)
+        # Write wrapper script to fixed path in shared volume (payload container waits for this file)
+        shared_volume = get_shared_volume_path()
+        fixed_script_dir = os.path.join(shared_volume, "pilot-wrapper")
+        self._job_dir = fixed_script_dir
         try:
             env_dict = {
                 "JOB_ID": job.jobid,
@@ -137,7 +140,7 @@ class Executor(GenericExecutor):
             }
 
             wrapper_script_content = generate_wrapper_script(cmd, "", env_dict)
-            wrapper_path = write_wrapper_script(self._job_dir, wrapper_script_content)
+            wrapper_path = write_wrapper_script(fixed_script_dir, wrapper_script_content)
         except K8sError as e:
             logger.error(f"Failed to write wrapper script: {e}")
             job.piloterrorcodes, job.piloterrordiags = errors.add_error_code(
